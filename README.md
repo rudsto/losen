@@ -2,12 +2,22 @@
 
 En KI-assistent som hjelper deg med datamaskinen ved å bruke det samme grensesnittet som deg selv, slik at alt den gjør kan **sees, forstås og stoppes**. Losen bygger på [Agent S3](https://github.com/simular-ai/Agent-S) fra Simular.
 
-> **Status:** tidlig utvikling (iterasjon 0). Ikke klar for sluttbrukere.
+> **Status:** del 1, for utvikleren selv, er under arbeid. Ikke klar for andre brukere.
 >
-> **Advarsel:** `losen-s3` har Losens tilpasninger av S3-prompten, men ikke Losens godkjenning ennå. Den kommer i iterasjon 1. Agenten utfører hvert steg uten å spørre. Bruk bare ufarlige oppgaver, og stopp ved å dra musen helt opp i øvre venstre hjørne eller med Ctrl+C.
+> **Advarsel:** `losen-s3` har Losens tilpasninger av S3-prompten, men ikke Losens godkjenning ennå. Den kommer i del 1, iterasjon 1.1. Agenten utfører hvert steg uten å spørre. Bruk bare ufarlige oppgaver, og stopp ved å dra musen helt opp i øvre venstre hjørne eller med Ctrl+C.
 
 - Konseptet: [docs/konsept.md](docs/konsept.md)
 - Planen: [docs/plan.md](docs/plan.md)
+- Erfaringer fra egen bruk: [docs/erfaringer.md](docs/erfaringer.md)
+
+## To deler
+
+| | Del 1 – Losen for meg | Del 2 – Losen for andre |
+|---|---|---|
+| Hvem | Utvikleren selv | Usikre brukere, først pensjonister |
+| Grensesnitt | Terminalen: godkjenn hvert steg (j/n/stopp) | Sluttbrukervindu på enkel norsk |
+| Plattform | Mac | macOS og Windows, senere Linux og Android |
+| Status | Under arbeid | Starter når del 1 er i daglig bruk |
 
 ## Oppsett (macOS, Windows, Linux)
 
@@ -53,7 +63,7 @@ losen-s3 \
 | 1 – offline | Python-miljøet | `python tests/run_checks.py` |
 | 2 – API | `ANTHROPIC_API_KEY` (små kall, koster litt) | `python tests/run_checks.py --api` |
 | 3 – skrivebord | Skjerm og tillatelser | Kjør `losen-s3` med en ufarlig oppgave |
-| 4 – eval | Som nivå 3, helst i en VM | Kommer i iterasjon 2 |
+| 4 – eval | Som nivå 3, helst i en VM | Kommer i del 2 |
 
 **Sky og Linux uten skjerm:** S3 importerer pyautogui, som krever en skjerm. Kjør nivå 1 og 2 med en virtuell skjerm: `xvfb-run python tests/run_checks.py` (ikke testet ennå).
 
@@ -66,6 +76,7 @@ losen-s3 \
 | `tests/` | Testnivå 1 og 2 |
 | `docs/konsept.md` | Konseptet og beslutningene |
 | `docs/plan.md` | Iterasjoner, arbeidsform og evaluering |
+| `docs/erfaringer.md` | Funn fra egen bruk, som grunnlag for del 2 |
 
 ## Arbeidsform
 

@@ -1,6 +1,6 @@
 # Losen – konsept
 
-*Sist oppdatert: 4. november 2026. Status: v0 under arbeid.*
+*Sist oppdatert: 4. november 2026. Status: del 1 under arbeid.*
 
 Navnet: En los går om bord og fører skipet trygt i havn, mens kapteinen hele tiden har kommandoen. Brukeren er kapteinen.
 
@@ -12,10 +12,35 @@ Bakgrunn: Når en KI-assistent jobber i bakgrunnen eller via terminalen, vet ikk
 
 ## Målgruppe
 
-- Unge og eldre som er usikre på digitale verktøy. De første brukerne er trolig pensjonister.
-- Skal være god nok til at en utvikler kan bruke den. Første testbruker er utvikleren selv.
+- **Del 1:** utvikleren selv, på egen Mac.
+- **Del 2:** unge og eldre som er usikre på digitale verktøy. De første brukerne er trolig pensjonister, med en hjelper som setter opp.
+
+## Del 1 og del 2
+
+Losen bygges i to deler. Nesten all kompleksiteten i konseptet finnes fordi Losen skal brukes av andre. For utvikleren selv forsvinner det meste.
+
+| Del av konseptet | Del 1 – Losen for meg | Del 2 – Losen for andre |
+|---|---|---|
+| Prinsipper | 1, 3 og 4 fullt ut. 2 delvis: S3 sin plan vises (engelsk). | Alle seks |
+| Arkitektur | Kjerne, hendelser og logg. Grensesnittet er terminalen. | Sluttbrukervindu, MCP for andre, flere plattformer |
+| Testtrappen | Oppgave 1–2, manuelt | Oppgave 1–5 med full evaluering |
+| Godkjenning | Hvert steg (j/n/stopp) | Tre lag |
+| Forbudte handlinger | Kodeagenten låst og regel 7 fjernet. Utvikleren er vakten. | Hele listen med sjekker, og utviklermodus |
+| Innlogging | Utvikleren logger inn selv før økten | Passordtjeneste, overlevering og totrinnsbekreftelse |
+| Cookiebannere | – | «Bare nødvendige» |
+| Grensesnitt | Terminalen (TUI valgfritt) | Sluttbrukervindu |
+| Innstillinger | Flagg og miljøvariabler | Etter konseptet |
+| Oppsett og nøkler | Miljøvariabel med kostnadstak | Veiviser for hjelper, OpenRouter, installasjonsfiler |
+| MCP | Valgfritt, lokalt for Claude Code | Med samtykke og reglene for andre |
+| Tilpasninger av S3 | Gjort | Videre arbeid: synlig skriving og synlig åpning av apper |
+
+**To ting gjelder alltid, også i del 1:** godkjenning før hver handling, og at kjernen sender hendelser som logges. Det er det som gjør at del 2 bygger videre på del 1 i stedet for å starte på nytt.
+
+Seksjonene under beskriver det fulle konseptet. Linjen *Gjelder* under hver overskrift sier hvilken del den hører til.
 
 ## Prinsipper
+
+*Gjelder: begge. Del 1 følger prinsipp 1, 3 og 4 fullt ut og prinsipp 2 delvis.*
 
 1. **Synlighet går foran effektivitet.** Synlige klikk og menyer foretrekkes. Hurtigtaster må slås på aktivt.
 2. **Hva og hvorfor før hver handling**, kort og meningsfullt, på enkel norsk.
@@ -25,6 +50,8 @@ Bakgrunn: Når en KI-assistent jobber i bakgrunnen eller via terminalen, vet ikk
 6. **Finn ut selv først, spør når noe mangler.** Rekkefølgen er: det brukeren har sagt, det som vises på skjermen, noen få synlige og ufarlige steg, og til slutt et spørsmål. Assistenten graver ikke i private ting den ikke trenger, leter ikke i det uendelige og gjetter aldri der en feil ikke kan angres.
 
 ## Arkitektur
+
+*Gjelder: begge. I del 1 er grensesnittet terminalen.*
 
 | Lag | Innhold |
 |---|---|
@@ -41,6 +68,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 
 ## De første oppgavene (testtrappen)
 
+*Gjelder: oppgave 1–2 i del 1 (manuelt), alle fem i del 2.*
+
 | # | Oppgave | Slik gjør Losen det |
 |---|---|---|
 | 1 | Helsesjekk | Åpner Innstillinger og viser hvor internett og lagringsplass står. Svarer på enkel norsk. |
@@ -55,6 +84,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 
 ## Godkjenning
 
+*Gjelder: del 2. I del 1 godkjennes hvert steg.*
+
 | Lag | Gjelder | Hva brukeren gjør |
 |---|---|---|
 | Forvarsel med nedtelling | Alle handlinger | Ingenting. Handlingen skjer etter noen sekunder med mindre brukeren stopper den. |
@@ -66,6 +97,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 - Spørsmål og overlevering stopper uansett.
 
 ## Forbudte handlinger
+
+*Gjelder: del 2. I del 1 er kodeagenten låst og regel 7 fjernet, og utvikleren er vakten.*
 
 **Aldri automatisk.** Losen nekter, forklarer hvorfor og ber brukeren gjøre det selv.
 
@@ -93,6 +126,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 
 ## Grensesnitt
 
+*Gjelder: del 2. Del 1 bruker terminalen.*
+
 **v0 – TUI for utvikleren (forenklet):** én visning, økt. Den har oppgavefelt, steg med norsk forklaring og knappene Godkjenn, Avvis og Stopp. Resten ligger i en innstillingsfil. TUI-en hentes frem når agenten venter.
 
 **Senere – sluttbrukervindu:**
@@ -116,6 +151,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 
 ## Innstillinger
 
+*Gjelder: del 2. Del 1 bruker flagg og miljøvariabler.*
+
 - Ingen profil, ingen innlogging og ingen synlighetsnivåer.
 - Få innstillinger med trygge standardverdier: tilkobling, tempo, tekststørrelse og språk.
 - Sikkerhet ligger i koden og kan ikke slås av.
@@ -123,6 +160,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 - Lagres på standardplassen for hvert operativsystem, i en lesbar fil med versjonsnummer. Nøklene ligger bare i operativsystemets nøkkelring.
 
 ## Oppsett, nøkler og kostnad
+
+*Gjelder: begge. Del 1: miljøvariabel med kostnadstak. Resten er del 2.*
 
 | | Nå (v0) | Senere |
 |---|---|---|
@@ -136,6 +175,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 
 ## MCP – tilkobling fra eksterne KI-tjenester
 
+*Gjelder: del 1 valgfritt (lokalt, for Claude Code). Reglene for andre brukere hører til del 2.*
+
 - **Oppgavenivå:** Den eksterne KI-en gir Losen en oppgave. Losen planlegger, viser, ber om godkjenning og utfører selv.
 - Verktøy: `start_task(beskrivelse)`, `get_status(task_id)`, `stop_task(task_id)`.
 - Godkjenning, overlevering og spørsmål skjer **bare i Losens eget vindu**, aldri via MCP.
@@ -144,6 +185,8 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 - Kommer etter v0 og før sluttbrukervinduet.
 
 ## Tilpasninger av S3 (`src/losen/s3_adapt.py`)
+
+*Gjelder: del 1 (gjort).*
 
 **Gjort og verifisert:**
 
@@ -161,10 +204,6 @@ Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 
 ## Plan
 
-**v0 (forenklet):** Losen-sløyfen med hendelser og godkjenning av hvert steg, norsk «hva og hvorfor» i generatorens *Next Action*, TUI med én visning og en innstillingsfil. Claude i begge roller, bare macOS. Test av oppgave 1–2.
-
-**v0.1:** `need_user` (spørsmål og overlevering), oppgave 3–5.
-
-**Utsatt med vilje:** sluttbrukervindu, installasjonsfiler, OpenRouter-kobling, MCP, beskyttelse mot angrep via den delte kanalen (må være på plass før ekte brukere), sjekk mot tilgjengelighetstreet, skjermbilder i grensesnittet, ramme eller statusvindu som alltid ligger øverst, hjelp på avstand, Android og delegering.
+Se [plan.md](plan.md). Kort fortalt gjør del 1 (iterasjon 1.0–1.2) Losen til et verktøy for utvikleren selv. Del 2 (iterasjon 2.1–2.9) gjør den trygg og forståelig for andre, og starter når del 1 er i daglig bruk. Erfaringer fra del 1 samles i [erfaringer.md](erfaringer.md).
 
 **Åpent:** sjekk av varemerke og domene for «Losen», og lisens for egen kode før eventuell publisering.
