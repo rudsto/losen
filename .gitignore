@@ -9,3 +9,8 @@ __pycache__/
 
 # Lokale miljøer og hemmeligheter
 .env
+
+# Byggefiler fra pip install -e .
+*.egg-info/
+build/
+dist/
