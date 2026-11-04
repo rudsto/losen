@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+src/losen/__init__.py
+src/losen/run_s3.py
+src/losen/s3_adapt.py
+src/losen.egg-info/PKG-INFO
+src/losen.egg-info/SOURCES.txt
+src/losen.egg-info/dependency_links.txt
+src/losen.egg-info/entry_points.txt
+src/losen.egg-info/requires.txt
+src/losen.egg-info/top_level.txt

@@ -1,0 +1,2 @@
+gui-agents==0.3.2
+anthropic==2.4.0

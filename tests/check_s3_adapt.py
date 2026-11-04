@@ -54,3 +54,6 @@ order = s3_adapt.text_blocks_first([B(type='thinking'), B(type='text', text='x')
 results.append(check('tekstblokk legges først', order[0].type == 'text' and order[1].type == 'thinking'))
 print('LENGDE', len(before), '->', len(after))
 print('ALT OK' if all(results) else 'NOE FEILET')
+
+import sys
+sys.exit(0 if all(results) else 1)

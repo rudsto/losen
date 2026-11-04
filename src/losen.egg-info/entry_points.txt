@@ -1,0 +1,2 @@
+[console_scripts]
+losen-s3 = losen.run_s3:main

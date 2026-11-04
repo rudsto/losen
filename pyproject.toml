@@ -1,0 +1,21 @@
+[build-system]
+requires = ['setuptools>=69']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'losen'
+version = '0.0.1'
+description = 'KI-assistent som hjelper deg med datamaskinen synlig, forklart og stoppbart. Bygger på Agent S3.'
+readme = 'README.md'
+requires-python = '>=3.11,<3.12'
+dependencies = [
+  # Låst: s3_adapt.py er skrevet og testet mot akkurat disse versjonene.
+  'gui-agents==0.3.2',
+  'anthropic==2.4.0',
+]
+
+[project.scripts]
+losen-s3 = 'losen.run_s3:main'
+
+[tool.setuptools.packages.find]
+where = ['src']
