@@ -64,10 +64,12 @@ Kjernen skal kunne testes med en *falsk S3* som returnerer forhåndsbestemte han
 - `.env.example`
 - oppsett for macOS, Windows og Linux i README
 - S3-tilpasninger: kodeagenten er fjernet og låst, regel 6 er snudd, regel 7 er fjernet, `temperature` fjernes, og tekstblokker legges før tenkeblokker
+- ren kloning på Windows-PC-en (4. november 2026): Python 3.11.9, Tesseract 5.4, `pip install -e .`, og nivå 1 og 2 er grønne
+- GitHub Actions (`.github/workflows/niva1.yml`) som kjører nivå 1 på hver push og pull request, på Linux med `xvfb-run` og på Windows
+- `CLAUDE.md` med reglene for Claude Code i repoet
 
 **Gjenstår:**
-- GitHub Actions som kjører nivå 1 på hver push (Linux med `xvfb-run`)
-- test av ren kloning på en annen maskin
+- se at arbeidsflyten blir grønn på GitHub etter første push
 
 **Ferdig når:** En ren kloning, oppsett og nivå 1 gir grønt på Macen *og* på én annen maskin eller i CI.
 
@@ -244,5 +246,5 @@ Del 2 starter når del 1 er i daglig bruk. Rekkefølgen kan justeres etter erfar
 
 ## Neste konkrete steg
 
-1. Fullføre 1.0: CI på GitHub og test av ren kloning på en annen maskin.
+1. Fullføre 1.0: se at CI er grønn på GitHub.
 2. Starte 1.1 i grenen `iter-1.1/sloyfe`.
