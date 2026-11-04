@@ -1,0 +1,8 @@
+# S3-logger inneholder modellsvar og beskrivelser av skjermen
+logs/
+tests/*.log
+
+__pycache__/
+*.pyc
+.venv/
+.DS_Store

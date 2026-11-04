@@ -1,0 +1,4 @@
+#!/bin/sh
+# Starter S3 sin kommandolinje med Losens tilpasninger (samme flagg som agent_s).
+HER=$(cd $(dirname $0)/.. && pwd)
+PYTHONPATH=$HER/src exec $HOME/agent-s/.venv/bin/python -m losen.run_s3 "$@"
