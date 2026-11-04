@@ -15,6 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
+losen = 'losen.cli:main'
 losen-s3 = 'losen.run_s3:main'
 
 [tool.setuptools.packages.find]

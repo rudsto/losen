@@ -73,9 +73,18 @@ Kjernen skal kunne testes med en *falsk S3* som returnerer forhåndsbestemte han
 
 **Ferdig når:** En ren kloning, oppsett og nivå 1 gir grønt på Macen *og* på én annen maskin eller i CI.
 
-### Iterasjon 1.1 – Sløyfen
+### Iterasjon 1.1 – Sløyfen (kode ferdig, prøve på Mac gjenstår)
 
 **Mål:** `losen` erstatter S3 sin kommandolinje, og ingen handling skjer uten godkjenning.
+
+**Gjort (4. november 2026, grenen `iter-1.1/sloyfe`):**
+- `kjerne.py`: sløyfen. `utfør()` kalles bare etter **j**. Venting og notater vises og logges, men kjøres ikke som kode.
+- `motor.py`: AgentS3 bak kjernens grensesnitt. Ved **n** eller feil i utføringen legges en beskjed foran neste melding til generatoren og refleksjonen.
+- `terminal.py` og `cli.py`: kommandoen `losen`, og `losen --falsk` for å prøve uten skjerm og modell
+- `hendelser.py`: JSONL i `logs/`. Tokens kommer fra hvert Anthropic-kall via `s3_adapt`.
+- nivå 1: `check_kjerne.py` (falsk S3) og `check_motor.py` (ekte AgentS3-objekter, uten kall). Nivå 2: `check_sloyfe_api.py` (Claude og kunstig skjermbilde, n og s). Alle er grønne på Windows.
+
+**Gjenstår:** Kalkulator-oppgaven og helsesjekken med `losen` på Macen (nivå 3).
 
 **Innhold:**
 - egen sløyfe rundt `AgentS3.predict`
@@ -247,4 +256,5 @@ Del 2 starter når del 1 er i daglig bruk. Rekkefølgen kan justeres etter erfar
 ## Neste konkrete steg
 
 1. Fullføre 1.0: se at CI er grønn på GitHub.
-2. Starte 1.1 i grenen `iter-1.1/sloyfe`.
+2. Prøve `losen` på Macen med Kalkulator-oppgaven og helsesjekken, og så slå sammen `iter-1.1/sloyfe`.
+3. Starte 1.2: kalibrering og egen bruk.

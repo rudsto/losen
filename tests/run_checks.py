@@ -19,7 +19,7 @@ def run(*args):
 
 
 def main():
-    codes = [run(os.path.join('tests', 'check_s3_adapt.py'))]
+    codes = [run(os.path.join('tests', name)) for name in ('check_s3_adapt.py', 'check_kjerne.py', 'check_motor.py')]
     if '--api' in sys.argv:
         if not os.environ.get('ANTHROPIC_API_KEY'):
             print('Mangler ANTHROPIC_API_KEY, hopper over nivå 2.')
@@ -27,6 +27,7 @@ def main():
         else:
             for mode in ('uten', 'med', 'tenking'):
                 codes.append(run(os.path.join('tests', 'check_claude.py'), mode))
+            codes.append(run(os.path.join('tests', 'check_sloyfe_api.py')))
     print('NIVÅ OK' if not any(codes) else 'NOE FEILET')
     sys.exit(1 if any(codes) else 0)
 

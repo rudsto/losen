@@ -66,6 +66,12 @@ Seksjonene under beskriver det fulle konseptet. Linjen *Gjelder* under hver over
 
 Grensesnittet kjenner bare hendelsene og vet ingenting om S3.
 
+**I del 1 (gjort i 1.1):** Kjernen sender `økt_startet`, `vurderer`, `modellkall`, `forslag`, `venter_på_godkjenning`, `utført`, `avvist`, `venter`, `notat`, `feil` og `ferdig`. Hendelsen `ferdig` har resultatet `løst`, `umulig`, `stoppet`, `maks_steg` eller `feil`. Beslutninger:
+
+- `venter` og `notat` er egne hendelser fordi venting og notater i agentens tekstbuffer ikke er handlinger på skjermen. De spørres ikke om og kjøres ikke som kode, men vises og logges.
+- Ved **n** får agenten beskjed i neste melding, på engelsk som resten av S3-prompten, sammen med brukerens eventuelle begrunnelse. Det samme skjer når en handling feiler.
+- `trenger_deg` og `usikker` kommer i del 2.
+
 ## De første oppgavene (testtrappen)
 
 *Gjelder: oppgave 1–2 i del 1 (manuelt), alle fem i del 2.*

@@ -9,10 +9,12 @@ Tilpasninger:
 - Regel 6 (hurtigtaster): snudd til synlige klikk. Hurtigtaster er av og låst, med mindre allow_hotkeys=True.
 - Anthropic-kall: temperature fjernes når SDK-en ikke tar imot den, og tekstblokker
   legges først i svaret (nye Claude-modeller kan starte med en tenkeblokk; S3 leser content[0].text).
+  Hvert kall meldes til lyttere (add_model_call_listener) med modell, tokens og tid, for hendelsesloggen.
 '''
 import functools
 import inspect
 import re
+import time
 
 from anthropic.resources.messages import Messages
 from gui_agents.s3.agents.grounding import OSWorldACI
@@ -79,6 +81,27 @@ def text_blocks_first(content):
     return texts + others
 
 
+_model_call_listeners = []
+
+
+def add_model_call_listener(fn):
+    '''fn(modell, tokens_inn, tokens_ut, sekunder) kalles etter hvert Anthropic-kall.'''
+    _model_call_listeners.append(fn)
+
+
+def remove_model_call_listener(fn):
+    if fn in _model_call_listeners:
+        _model_call_listeners.remove(fn)
+
+
+def _report_model_call(model, response, seconds):
+    usage = getattr(response, 'usage', None)
+    tokens_in = getattr(usage, 'input_tokens', None)
+    tokens_out = getattr(usage, 'output_tokens', None)
+    for fn in list(_model_call_listeners):
+        fn(model, tokens_in, tokens_out, seconds)
+
+
 def _fix_anthropic_messages():
     if getattr(Messages.create, '_losen_patched', False):
         return
@@ -89,7 +112,9 @@ def _fix_anthropic_messages():
     def create(self, *args, **kwargs):
         if drop_temperature:
             kwargs.pop('temperature', None)
+        start = time.monotonic()
         response = original(self, *args, **kwargs)
+        _report_model_call(kwargs.get('model'), response, time.monotonic() - start)
         content = getattr(response, 'content', None)
         if content:
             response.content = text_blocks_first(content)
