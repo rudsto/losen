@@ -1,29 +1,44 @@
 # Losen – gjennomføringsplan
 
-*Sist oppdatert: 4. november 2026.* Konseptet og beslutningene står i [konsept.md](konsept.md).
+*Sist oppdatert: 4. november 2026.*
+
+- Konseptet og beslutningene: [konsept.md](konsept.md)
+- Erfaringer fra egen bruk: [erfaringer.md](erfaringer.md)
+
+## To deler
+
+| | Del 1 – Losen for meg | Del 2 – Losen for andre |
+|---|---|---|
+| Hvem | Utvikleren selv | Usikre brukere, først pensjonister, med en hjelper som setter opp |
+| Mål | Et verktøy der agenten gjør oppgaver på Macen mens jeg ser på og godkjenner hvert steg | En trygg og forståelig assistent som andre kan stole på |
+| Grensesnitt | Terminalen (j/n/stopp) | Sluttbrukervindu på enkel norsk |
+| Plattform | Mac | macOS og Windows, senere Linux og Android |
+| Start | Nå | Når del 1 er i daglig bruk |
+
+**To ting fra konseptet gjelder også i del 1:** godkjenning før hver handling, og at kjernen sender hendelser som logges. Det koster lite nå, og det gjør at del 2 bygger videre på del 1 i stedet for å starte på nytt.
 
 ## Arbeidsform
 
 - **GitHub (`rudsto/losen`) er kilden til sannhet.** Alt arbeid skjer mot repoet, fra hvilken som helst maskin eller i skyen. Ingenting viktig skal bare finnes lokalt eller i en chat.
 - **Én iterasjon = én milepæl på GitHub**, med oppgavene som issues.
-- **Grener:** `main` skal alltid kunne installeres og kjøres. Arbeid skjer i grener (`iter-1/kjerne`, `fix/...`) og kommer inn via pull request.
+- **Grener:** `main` skal alltid kunne installeres og kjøres. Arbeid skjer i grener (`iter-1.1/sloyfe`, `fix/...`, `docs/...`) og kommer inn via pull request.
 - **Ferdig betyr** at følgende er på plass i samme pull request:
   - kode, tester og dokumentasjon er oppdatert
   - testnivå 1 er grønt
-  - endringer som påvirker hva agenten gjør på skjermen, har en eval-rapport
   - ingen nøkler, logger eller skjermbilder er committet
-- **Beslutninger** skrives inn i `docs/konsept.md`. Endringer i planen skrives her.
+  - i del 2 også: endringer som påvirker hva agenten gjør på skjermen, har en eval-rapport
+- **Beslutninger** skrives inn i `docs/konsept.md`, endringer i planen her, og funn fra bruk i `docs/erfaringer.md`.
 - **Versjoner:** S3 (`gui-agents 0.3.2`) og `anthropic 2.4.0` er låst i `pyproject.toml`. Oppgradering er en egen oppgave med full testkjøring.
 
 ## Hvor arbeidet kan gjøres
 
 | Miljø | Kan gjøre | Kan ikke |
 |---|---|---|
-| Sky eller Linux uten skjerm | Kode, dokumentasjon, testnivå 1 (med virtuell skjerm, `xvfb-run`) og nivå 2 | Styre et ekte skrivebord |
+| Sky eller Linux uten skjerm | Kode, dokumentasjon, testnivå 1 (med `xvfb-run`) og nivå 2 | Styre et ekte skrivebord |
 | Mac | Alt, også nivå 3–4 | – |
-| Windows-PC | Kode og nivå 1–2. Nivå 3–4 fra iterasjon 7. | Stole på skrivebordsstyring før Windows er testet |
+| Windows-PC | Kode og nivå 1–2. Nivå 3–4 når Windows er testet (del 2). | – |
 
-Kjernen (fra iterasjon 1) skal kunne testes med en *falsk S3* som returnerer forhåndsbestemte handlinger. Da kan mesteparten av logikken utvikles og testes uten skjerm.
+Kjernen skal kunne testes med en *falsk S3* som returnerer forhåndsbestemte handlinger. Da kan mesteparten av logikken utvikles og testes uten skjerm.
 
 ## Testnivåer
 
@@ -31,12 +46,14 @@ Kjernen (fra iterasjon 1) skal kunne testes med en *falsk S3* som returnerer for
 |---|---|---|---|
 | 1 – offline | Python-miljøet | Sjekker av prompten og enhetstester | `python tests/run_checks.py` |
 | 2 – API | `ANTHROPIC_API_KEY` | Små, ekte modellkall (koster litt) | `python tests/run_checks.py --api` |
-| 3 – skrivebord | Skjerm og tillatelser | Agenten styrer skjermen, kjørt manuelt | `losen-s3` / `losen` |
-| 4 – eval | Som nivå 3, helst VM for feller | Gjentatte kjøringer med ekstern sjekk og rapport | Kommer i iterasjon 2 |
+| 3 – skrivebord | Skjerm og tillatelser | Agenten styrer skjermen, kjørt manuelt | `losen` / `losen-s3` |
+| 4 – eval | Som nivå 3, helst VM for feller | Gjentatte kjøringer med ekstern sjekk og rapport | Del 2, iterasjon 2.1 |
 
-## Iterasjoner
+---
 
-### Iterasjon 0 – Fundament (pågår)
+## Del 1 – Losen for meg
+
+### Iterasjon 1.0 – Fundament (pågår)
 
 **Mål:** Repoet kan klones og kjøres hvor som helst.
 
@@ -51,163 +68,151 @@ Kjernen (fra iterasjon 1) skal kunne testes med en *falsk S3* som returnerer for
 **Gjenstår:**
 - GitHub Actions som kjører nivå 1 på hver push (Linux med `xvfb-run`)
 - test av ren kloning på en annen maskin
-- vurdere en låsefil (for eksempel med `uv`) for eksakte versjoner på tvers av operativsystemer
 
 **Ferdig når:** En ren kloning, oppsett og nivå 1 gir grønt på Macen *og* på én annen maskin eller i CI.
 
-### Iterasjon 1 – Losen-sløyfen (kjerne)
+### Iterasjon 1.1 – Sløyfen
 
-**Mål:** Losen erstatter S3 sin kommandolinje, og ingen handling skjer uten godkjenning.
+**Mål:** `losen` erstatter S3 sin kommandolinje, og ingen handling skjer uten godkjenning.
 
 **Innhold:**
 - egen sløyfe rundt `AgentS3.predict`
-- hendelsesmodell
-- **hendelseslogg i JSONL**: tidspunkt, steg, handlingstype, beskrivelse, kode, godkjenning og tokens
-- godkjenning av hvert steg i terminalen (enkelt j/n til TUI-en finnes)
-- Stopp
-- kommandoen `losen`
+- for hvert steg vises planen (S3 sin *Next Action*, på engelsk) og handlingen som skal kjøres
+- valg per steg: **j** = utfør, **n** = ikke utfør (agenten får beskjed og prøver noe annet), **s** = stopp
+- hendelser i JSONL: tidspunkt, steg, plan, handling, kode, valg og tokens
+- kommandoen `losen "oppgave"`, med samme modellvalg som `losen-s3` (flagg og miljøvariabler)
 - falsk S3 for testing uten skjerm
 
 **Ferdig når:**
-- Kalkulator-oppgaven kjøres via `losen`
+- Kalkulator-oppgaven og helsesjekken kjøres via `losen`
 - 0 handlinger skjer uten godkjenning
 - loggen inneholder alle hendelser
-- nivå 1 dekker hendelsesmodellen med falsk S3
+- nivå 1 dekker sløyfen med falsk S3
 
-**Miljø:** Kode overalt. Nivå 3 på Mac.
+### Iterasjon 1.2 – I bruk
 
-### Iterasjon 2 – Eval v0
+**Mål:** Losen brukes til egne oppgaver, og erfaringene skrives ned.
 
-**Mål:** Fra nå av måles det på hver endring om Losen virker og holder prinsippene.
+**Innhold:**
+- kalibrering av klikk for egen skjerm
+- justeringer etter bruk
+- funn føres i `docs/erfaringer.md`
+- *Valgfritt:* MCP over stdio, så Claude Code kan gi Losen oppgaver. Godkjenningen skjer fortsatt i terminalen.
+- *Valgfritt:* en enkel TUI, hvis terminalen blir for knapp
+
+**Ferdig når:** Losen er brukt på egne oppgaver over et par uker, og `erfaringer.md` har funn som kan brukes i del 2.
+
+---
+
+## Del 2 – Losen for andre
+
+Del 2 starter når del 1 er i daglig bruk. Rekkefølgen kan justeres etter erfaringene fra del 1.
+
+### 2.1 – Evaluering
 
 **Innhold:**
 - oppgaver som YAML-filer
-- kjøreskript med N kjøringer, nullstilling før hver kjøring og ekstern sjekk etterpå
-- sjekker for Mac (AppleScript og tilgjengelighetsgrensesnittet)
-- **fellesider på localhost**: knapper som Betal og Last ned som bare registrerer klikket
-- rapport i Markdown, laget fra hendelsesloggen
+- kjøreskript med N kjøringer, nullstilling og ekstern sjekk
+- sjekker for Mac
+- fellesider på localhost
+- rapport laget fra hendelsesloggen
 
-Oppgaver: Kalkulator, helsesjekk, nyheter, 3–5 feller og 1–2 tvetydige oppgaver.
+**Ferdig når:** Det finnes en rapport for oppgave 1–2, feller og tvetydige oppgaver, og målene i *Evaluering* er satt.
 
-**Ferdig når:** Det finnes en rapport for alle oppgavene, og målene i *Evaluering* er satt.
-
-**Miljø:** Mac, helst en VM for fellene.
-
-### Iterasjon 3 – Forklaring og synlighet
-
-**Mål:** Hvert steg sier hva og hvorfor på enkel norsk, og ingenting skjer usynlig.
+### 2.2 – Forklaring og synlighet
 
 **Innhold:**
-- *Next Action* på norsk via `s3_adapt`, og hendelsene bærer forklaringen
-- synlig skriving, også med æøå, i stedet for innliming i `type`
-- `open` via synlige klikk eller med tydelig forvarsel i stedet for Spotlight
+- *Next Action* på enkel norsk
+- synlig skriving, også med æøå
+- `open` uten Spotlight, eller med tydelig forvarsel
 - modellkall vises i statusen
-- håndtering av svar med bare tenking (det tomme svaret i historikken)
+- håndtering av svar med bare tenking
 
-**Ferdig når** evalueringen viser:
-- ≥ 95 % av stegene har norsk forklaring
-- 0 hurtigtaster er brukt når de er av
-- oppgave 1–2 lykkes i ≥ 4 av 5 kjøringer
-- 0 falske «ferdig»
+**Ferdig når:** ≥ 95 % av stegene har norsk forklaring, 0 hurtigtaster er brukt når de er av, og det er 0 falske «ferdig».
 
-### Iterasjon 4 – TUI v0 → **v0 ferdig**
-
-**Mål:** Et utviklergrensesnitt i terminalen.
-
-**Innhold:**
-- Textual
-- én visning: oppgave, steg med forklaring, og knappene Godkjenn, Avvis og Stopp
-- innstillingsfil for modell, kalibrering og tempo
-- TUI-en hentes frem når agenten venter (Mac)
-
-**Ferdig når:** Oppgave 1–2 kjøres fra TUI-en, og målene for v0 i evalueringen holder.
-
-### Iterasjon 5 – Spørsmål og overlevering → **v0.1**
+### 2.3 – Spørsmål og overlevering
 
 **Innhold:**
 - `need_user` med hendelsen `trenger_deg`
-- «finn ut selv først» (prinsipp 6) i prompten
-- innlogging via autofyll fra passordtjenesten
+- «finn ut selv først» (prinsipp 6)
+- autofyll fra passordtjenesten
 - overlevering for Touch ID, hovedpassord og engangskoder
 - oppgave 3–5
 
-**Ferdig når:**
-- evalueringen dekker oppgave 3–5
-- 0 passord eller koder er skrevet av agenten
-- overleveringen er riktig i 100 % av tilfellene
+**Ferdig når:** 0 passord eller koder er skrevet av agenten, og overleveringen er riktig i 100 % av tilfellene.
 
-### Iterasjon 6 – Godkjenningsmodell og forbud
+### 2.4 – Godkjenningsmodell og forbud
 
 **Innhold:**
 - forvarsel med nedtelling
-- aktiv godkjenning for handlinger som kan være umulige å angre, gjenkjent med enkle regler
+- aktiv godkjenning for handlinger som kan være umulige å angre
 - regel ved tvil: behandles som en handling som ikke kan angres
-- enkle sjekker mot forbud: kortnummer, fødselsnummer og kjente fjernhjelpsprogrammer
-- utviklermodus: miljøvariabel, rød markering, og bygget bort fra utgivelser
+- forbudsliste med enkle sjekker
+- utviklermodus, bygget bort fra utgivelser
+- cookiebannere: «bare nødvendige»
 
-**Ferdig når:**
-- fellene i evalueringen gir 0 brudd
-- antall godkjenninger per oppgave går ned, uten at riktig stopp faller under 100 %
+**Ferdig når:** Fellene gir 0 brudd, og det trengs færre godkjenninger uten at riktig stopp faller under 100 %.
 
-### Iterasjon 7 – Windows
-
-**Innhold:**
-- plattformlaget for Windows: hente vinduet frem, nøkkelring og tillatelser
-- kalibrering
-- sjekker for evalueringen på Windows
-
-**Ferdig når:** Evalueringen for oppgave 1–2 på Windows når de samme målene som på Mac.
-
-### Iterasjon 8 – MCP (lokal)
+### 2.5 – Sluttbrukervindu og oppsett for hjelper
 
 **Innhold:**
-- MCP-server over stdio med `start_task`, `get_status` og `stop_task`
-- godkjenning og overlevering bare i Losens eget vindu
-- samtykke ved første tilkobling
-- statuslinjen viser hvem som ga oppgaven
-
-**Ferdig når:**
-- Claude Code eller Claude Desktop kan kjøre testtrappen gjennom Losen
-- en test viser at det ikke finnes noen vei til godkjenning via MCP
-
-### Iterasjon 9 – Sluttbrukervindu og oppsett for hjelper
-
-**Innhold:**
-- grafisk vindu med stor tekst, norsk språk, oppgaveknapper for testede oppgaver og knappen *Ta roret*
+- vindu med stor tekst, oppgaveknapper og *Ta roret*
 - Losen kan ikke klikke i sitt eget vindu
-- veiviser ved første oppstart: tillatelser, tilkobling og prøvekjøring
+- veiviser ved første oppstart
 - innstillinger etter konseptet
 
-**Ferdig når:** En brukertest med 1–2 personer utenfor utviklermiljøet, sammen med en hjelper, er gjennomført, og tilbakemeldingene er skrevet ned.
+**Ferdig når:** En brukertest med 1–2 personer, sammen med en hjelper, er gjennomført, og tilbakemeldingene er skrevet ned.
 
-### Iterasjon 10 – Sikkerhet før ekte brukere
+### 2.6 – Windows
+
+**Innhold:** plattformlaget for Windows, kalibrering og sjekker for evalueringen.
+
+**Ferdig når:** Evalueringen for oppgave 1–2 når de samme målene som på Mac.
+
+### 2.7 – MCP for andre
 
 **Innhold:**
-- beskyttelse mot instruksjoner i innhold på skjermen (den delte kanalen)
+- samtykke ved første tilkobling
+- godkjenning og overlevering bare i Losens eget vindu
+- statuslinjen viser hvem som ga oppgaven
+
+**Ferdig når:** En test viser at det ikke finnes noen vei til godkjenning via MCP.
+
+### 2.8 – Sikkerhet før ekte brukere
+
+**Innhold:**
+- beskyttelse mot instruksjoner i innhold på skjermen
 - sjekk av hvert klikkmål mot tilgjengelighetstreet
 - maskering i loggen
-- personvern: hva som sendes til hvem, og en personvernerklæring
+- personvern og personvernerklæring
 
-**Ferdig når:**
-- evalueringen med injeksjonsfeller gir 0 brudd
-- en gjennomgang av personvernet er gjort
+**Ferdig når:** Injeksjonsfellene gir 0 brudd, og en gjennomgang av personvernet er gjort.
 
-### Iterasjon 11 – Distribusjon og pilot
+### 2.9 – Distribusjon og pilot
 
 **Innhold:**
-- installasjonsfiler (`.dmg` og `.exe`), signert og notarisert
-- kobling mot OpenRouter for hjelperen, med kredittgrense
+- installasjonsfiler, signert og notarisert
+- kobling mot OpenRouter for hjelperen
 - sjekk av varemerke og domene
 - valg av lisens
-- pilot med pensjonister via en hjelper
+- pilot med pensjonister
 
 **Ferdig når:** Piloten er gjennomført med en fastsatt runde for tilbakemeldinger.
 
 **Senere:** Linux-skrivebord (Wayland), Android via ADB, hjelp på avstand, delegering og skjermbilder i grensesnittet.
 
-## Evaluering (fra iterasjon 2)
+---
 
-| Dimensjon | Måling | Mål i v0 |
+## Evaluering
+
+**Del 1:**
+- testnivå 1–2 og manuelle prøver
+- agentens egen «ferdig» brukes aldri som fasit; sjekk resultatet selv
+- nullstill før hver prøve
+
+**Del 2:**
+
+| Dimensjon | Måling | Mål |
 |---|---|---|
 | Oppgaven løst | En ekstern sjekk bekrefter resultatet | ≥ 4 av 5 kjøringer |
 | Ærlig om resultatet | Agenten sier «ferdig», men sjekken feiler | **0** |
@@ -218,8 +223,8 @@ Oppgaver: Kalkulator, helsesjekk, nyheter, 3–5 feller og 1–2 tvetydige oppga
 | Spør riktig | Spør ved uklarhet og gjetter ikke | Kontrolleres manuelt |
 | Treffsikkerhet, kostnad og tempo | Klikktreff, steg, tid, tokens og godkjenninger | Følges over tid |
 
-**Regler for evalueringen:**
-- Agentens egen «ferdig» brukes aldri som fasit.
+**Regler:**
+- Ekstern sjekk, aldri agentens egen «ferdig».
 - 3–5 kjøringer per oppgave.
 - Nullstilling før hver kjøring.
 - Forbud testes mot fellesider, aldri mot ekte tjenester.
@@ -231,13 +236,13 @@ Oppgaver: Kalkulator, helsesjekk, nyheter, 3–5 feller og 1–2 tvetydige oppga
 |---|---|
 | S3 endres i en ny versjon | Låst versjon. `s3_adapt` stopper med en tydelig feil hvis prompten har endret seg. |
 | Endringer i Anthropic-SDK-en eller modellene (som tenkeblokker) | Låst SDK. Nivå 2-tester ved hver oppgradering. |
-| Svak treffsikkerhet med Claude som grounding-modell | Kalibrering. Prøve UI-TARS via OpenRouter i evalueringen. |
+| Svak treffsikkerhet med Claude som grounding-modell | Kalibrering. Prøve UI-TARS via OpenRouter. |
 | Kostnad | Kostnadstak per nøkkel. Tokens i hendelsesloggen. |
-| Agenten erklærer falskt at den er ferdig | Ekstern sjekk og nullstilling i evalueringen |
-| Personvern, fordi skjermbilder sendes til skyen | Avklares i iterasjon 10, før ekte brukere |
+| Agenten erklærer falskt at den er ferdig | Sjekk selv i del 1. Ekstern sjekk og nullstilling i del 2. |
+| Del 1-valg gjør del 2 vanskelig | Skillet mellom kjerne og grensesnitt og loggen av hendelser holdes fra start |
+| Personvern, fordi skjermbilder sendes til skyen | Avklares i 2.8, før ekte brukere |
 
 ## Neste konkrete steg
 
-1. Fullføre iterasjon 0: CI på GitHub og test av ren kloning på en annen maskin.
-2. Opprette milepæler og issues for iterasjon 0–4 på GitHub.
-3. Starte iterasjon 1 i grenen `iter-1/kjerne`.
+1. Fullføre 1.0: CI på GitHub og test av ren kloning på en annen maskin.
+2. Starte 1.1 i grenen `iter-1.1/sloyfe`.
